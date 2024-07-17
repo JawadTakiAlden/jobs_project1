@@ -1,5 +1,4 @@
 import MainLayout from "../Layouts/MainLayout";
-import Chat from "../views/Chat";
 import HomePage from "../views/Home";
 import JobApplicationSent from "../views/JobApplicationSent/JobApplicationSent";
 import JobApplicationsPage from "../views/JobApplicationsPage";
@@ -50,9 +49,5 @@ export const mainRoutes = {
         },
       ],
     },
-    {
-      path : 'chat',
-      element : <Chat />
-    }
   ],
 };
