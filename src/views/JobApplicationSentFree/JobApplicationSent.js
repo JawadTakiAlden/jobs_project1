@@ -1,16 +1,71 @@
 import { FileDownloadOutlined } from "@mui/icons-material";
 import { alpha, Box, Button, Link, Typography } from "@mui/material";
-import React, { useEffect, useState } from "react";
-import useGetJobApplicationSent from "../../apis/useGetJobApplicationSent";
+import React from "react";
+
+const applications = [
+  {
+    name: "John Doe",
+    date: "2023/06/10",
+    link: "https://www.example.com/johndoe",
+  },
+  {
+    name: "Jane Smith",
+    date: "2023/06/11",
+    link: "https://www.example.com/janesmith",
+  },
+  {
+    name: "Alice Johnson",
+    date: "2023/06/12",
+    link: "https://www.example.com/alicejohnson",
+  },
+  {
+    name: "Bob Brown",
+    date: "2023/06/13",
+    link: "https://www.example.com/bobbrown",
+  },
+  {
+    name: "Charlie Davis",
+    date: "2023/06/14",
+    link: "https://www.example.com/charliedavis",
+  },
+  {
+    name: "Diana Evans",
+    date: "2023/06/15",
+    link: "https://www.example.com/dianaevans",
+  },
+  {
+    name: "Eve Foster",
+    date: "2023/06/16",
+    link: "https://www.example.com/evefoster",
+  },
+  {
+    name: "Frank Green",
+    date: "2023/06/17",
+    link: "https://www.example.com/frankgreen",
+  },
+  {
+    name: "Grace Harris",
+    date: "2023/06/18",
+    link: "https://www.example.com/graceharris",
+  },
+  {
+    name: "Hank Ingram",
+    date: "2023/06/19",
+    link: "https://www.example.com/hankingram",
+  },
+  {
+    name: "Ivy Johnson",
+    date: "2023/06/20",
+    link: "https://www.example.com/ivyjohnson",
+  },
+  {
+    name: "Jack King",
+    date: "2023/06/21",
+    link: "https://www.example.com/jackking",
+  },
+];
 
 const JobApplicationSent = () => {
-
-const applicatins = useGetJobApplicationSent()
-
-if(applicatins.isLoading){
-  return <p>Loading...</p>
-}
-
   return (
     <Box
       sx={{
@@ -21,7 +76,7 @@ if(applicatins.isLoading){
         flexWrap: "wrap",
       }}
     >
-      {applicatins.data.data.applications.map((application, i) => {
+      {applications.map((application, i) => {
         return (
           <Box
             key={i}
@@ -39,6 +94,9 @@ if(applicatins.isLoading){
               display: "flex",
               flexDirection: "column",
               justifyContent: "space-between",
+              "&:hover .actions": {
+                display: "flex",
+              },
             }}
           >
             <Box className={"content"}>
@@ -47,39 +105,16 @@ if(applicatins.isLoading){
                 sx={{
                   mb: 1,
                   px: 1,
-                  flex: 1,
+                  flex : 1
                 }}
               >
-                <Link
-                  sx={{
-                    color: 'inherit',
-                    textDecoration: 'none',
-                  }}
-                  component={"a"}
-                  href={application.cv_url}
-                >
-                  {application.user_full_name}
+                <Link sx={{
+                    color : 'inherit',
+                    textDecoration : 'none'
+                }} component={"a"} href={application.link}>
+                  {application.name}
                 </Link>{" "}
                 <Typography variant="caption">{application.date}</Typography>
-              </Typography>
-              <Typography
-                sx={{
-                  px: 1,
-                  mb: 1,
-                }}
-                variant="body2"
-              >
-                {application.job_title}
-              </Typography>
-              <Typography
-                sx={{
-                  px: 1,
-                  mb: 2,
-                }}
-                variant="body2"
-                color="text.secondary"
-              >
-                Status: {application.status}
               </Typography>
               <Button
                 sx={{
@@ -89,8 +124,6 @@ if(applicatins.isLoading){
                 startIcon={<FileDownloadOutlined />}
                 variant="outlined"
                 color="secondary"
-                component={"a"}
-                href={application.cv_url}
               >
                 Download CV
               </Button>
@@ -103,10 +136,9 @@ if(applicatins.isLoading){
                 alignItems: "center",
                 columnGap: "10px",
                 backgroundColor: "grey.100",
-                p: 1,
               }}
             >
-              <Button color="success">
+              <Button color="success" >
                 Accept
               </Button>
               <Button color="error">

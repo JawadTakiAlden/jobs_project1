@@ -1,44 +1,41 @@
 import { Box, Button, IconButton } from "@mui/material";
-import React, { useMemo, useEffect } from "react";
+import React, { useMemo } from "react";
 import { MaterialReactTable, useMaterialReactTable } from "material-react-table";
 import { CreateOutlined, MoreOutlined } from "@mui/icons-material";
 import { Link } from "react-router-dom";
 import useGetPosts from "../../apis/useGetPosts";
+import useGetPostsFreelancing from "../../apis/useGetPostsFreelancings";
 
-const PostsPage = () => {
-  const { data, isLoading} = useGetPosts();
-
-  // useEffect(() => {
-  //   refetch();
-  // }, [refetch]);
+const PostsPageFreelancing = () => {
+  const { data, isLoading} = useGetPostsFreelancing();
 
   const columns = useMemo(
     () => [
       {
-        accessorKey: "company_id",
-        header: "CompanyID",
+        accessorKey: "freelancer_id",
+        header: "FreelancerID",
         size: 150,
       },
       {
-        accessorKey: "company_name",
-        header: "Company Name",
-        size: 150,
-      },
-      {
-        accessorKey: "company_logo",
-        header: "Logo",
+        accessorKey: "profile_photo",
+        header: "Profile Photo",
         size: 200,
         Cell: ({ row }) => (
-          <img
-            src={row.original.company_logo}
-            alt="Company Logo"
-            style={{ width: '100px', height: 'auto' }}
-          />
-        ),
+            <img
+              src={row.original.profile_photo}
+              alt="Profile"
+              style={{ width: '100px', height: 'auto' }}
+            />
+          ),
       },
       {
-        accessorKey: "company_location",
-        header: "Company Location",
+        accessorKey: "phone_number",
+        header: "Phone Number",
+        size: 150,
+      },
+      {
+        accessorKey: "location",
+        header: "Location",
         size: 150,
       },
       {
@@ -52,28 +49,8 @@ const PostsPage = () => {
         size: 150,
       },
       {
-        accessorKey: "enrollment_status",
-        header: "Enrollment Status",
-        size: 150,
-      },
-      {
-        accessorKey: "prefered_experience",
-        header: "Preferred Experience",
-        size: 150,
-      },
-      {
-        accessorKey: "detailed_location",
-        header: "Detailed Location",
-        size: 200,
-      },
-      {
-        accessorKey: "requirements",
-        header: "Requirements",
-        size: 250,
-      },
-      {
-        accessorKey: "promises",
-        header: "Promises",
+        accessorKey: "earnings",
+        header: "Earnings",
         size: 150,
       },
       {
@@ -82,13 +59,13 @@ const PostsPage = () => {
         size: 250,
       },
       {
-        accessorKey: "application_deadline",
-        header: "Application Deadline",
-        size: 150,
+        accessorKey: "requirements",
+        header: "Requirements",
+        size: 250,
       },
       {
-        accessorKey: "expected_salary",
-        header: "Expected Salary",
+        accessorKey: "application_deadline",
+        header: "Application Deadline",
         size: 150,
       },
     ],
@@ -103,20 +80,18 @@ const PostsPage = () => {
     enableSorting: false,
     enableRowActions: true,
     renderRowActions: ({ row }) => (
-      <IconButton component={Link} to={`/posts/get/${row.original.id}`}>
+      <IconButton component={Link} to={`/freelancing_posts/get/${row.original.id}`}>
         <MoreOutlined />
       </IconButton>
     ),
   });
-
-
 
   return (
     <Box>
       <Button
         startIcon={<CreateOutlined />}
         component={Link}
-        to={"/posts/create"}
+        to={"/freelancingPosts/createFreelancing"}
         variant="contained"
         color="primary"
         sx={{
@@ -130,4 +105,4 @@ const PostsPage = () => {
   );
 };
 
-export default PostsPage;
+export default PostsPageFreelancing;

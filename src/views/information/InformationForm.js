@@ -1,4 +1,8 @@
-import { CameraOutlined, SaveOutlined } from "@mui/icons-material";
+import {
+  CameraOutlined,
+  DownloadOutlined,
+  SaveOutlined,
+} from "@mui/icons-material";
 import {
   Autocomplete,
   Box,
@@ -19,29 +23,55 @@ import * as yup from "yup";
 import MuiImage from "../../ui-components/MuiImage";
 import { LoadingButton } from "@mui/lab";
 import { useNavigate } from "react-router";
+import useFreelancer from "../../apis/useFreelancer";
+import useCompany from "../../apis/useCompany";
 
-const skills = [
-  {
-    title: "Css",
-  },
-  {
-    title: "Html",
-  },
-  {
-    title: "Js",
-  },
-  {
-    title: "Sass",
-  },
-  {
-    title: "Material Ui",
-  },
-  {
-    title: "Reactjs",
-  },
-  {
-    title: "Nextjs",
-  },
+const locations = [
+  "Damascus",
+  "Aleppo",
+  "Hama",
+  "Homs",
+  "Latakia",
+  "Tartus",
+  "Raqqa",
+  "Deir Elzor",
+  "Idlib",
+  "Daraa",
+  "Qunetiera",
+  "Alhasakah",
+  "Damascus Countryside",
+  "As Suwayda",
+];
+
+const industries = [
+  "Accounting",
+  "Administrative",
+  "Arts and Design",
+  "Business Development",
+  "Community and Social Services",
+  "Consulting",
+  "Education",
+  "Engineering",
+  "Entrepreneurship",
+  "Finance",
+  "Healthcare Services",
+  "Human Resources",
+  "Information Technology",
+  "Legal",
+  "Marketing",
+  "Media and Communication",
+  "Military and Protective Services",
+  "Operations",
+  "Product Management",
+  "Program and Project Management",
+  "Purchasing",
+  "Quality Assurance",
+  "Real Estate",
+  "Research",
+  "Sales",
+  "Support",
+  "Tourism",
+  "Others",
 ];
 
 const VisuallyHiddenInput = styled("input")({
@@ -58,33 +88,50 @@ const VisuallyHiddenInput = styled("input")({
 
 const CompanyForm = ({ type }) => {
   const navigate = useNavigate();
-  const companyHandeler = (values) => {
-    console.log({ ...values, type });
-    navigate("/home");
+  const company = useCompany();
+  const [error, setError] = useState("");
+
+  const companyHandeler = async (values) => {
+    try {
+      await company.mutateAsync(values);
+      navigate("/home");
+    } catch (err) {
+      setError("An error occurred, please try again.");
+    }
   };
+
   return (
     <Box>
       <Formik
         onSubmit={companyHandeler}
         initialValues={{
-          name: "",
-          logo: "",
-          website: "",
-          email: "",
-          size: "",
-          service: "",
-          description: "",
-          governorate: "",
+          company_name: "",
+          company_logo: "",
+          company_website: "",
+          company_email: "",
+          company_location: "",
+          company_size: "",
+          company_industry: "",
+          social_media_links: [],
+          founding_year: "",
         }}
         validationSchema={yup.object({
-          name: yup.string().required("name is required"),
-          website: yup.string().required("website is required"),
-          email: yup.string().email().required("email is required"),
-          size: yup.string().required("size is required"),
-          service: yup.string().required("service is required"),
-          description: yup.string().required("description is required"),
-          governorate: yup.string().required("governorate is required"),
-          logo: yup.mixed().required("logo is required"),
+          company_name: yup.string().required("name is required"),
+          company_website: yup.string().required("website is required"),
+          company_location: yup
+            .string()
+            .required("company_location is required"),
+          company_email: yup.string().email().required("email is required"),
+          company_size: yup.string().required("size is required"),
+          company_industry: yup
+            .string()
+            .required("company_industry is required"),
+          social_media_links: yup
+            .array()
+            .of(yup.string())
+            .required("social media links are required"),
+          founding_year: yup.string().required("founding year is required"),
+          company_logo: yup.mixed().required("logo is required"),
         })}
       >
         {({
@@ -114,40 +161,40 @@ const CompanyForm = ({ type }) => {
               >
                 <VisuallyHiddenInput
                   type="file"
-                  name="logo"
+                  name="company_logo"
                   onBlur={handleBlur}
                   accept="image/jpg,image/png,image/jpeg"
                   onChange={(e) => {
-                    setFieldValue("logo", e.target.files[0]);
+                    setFieldValue("company_logo", e.target.files[0]);
                   }}
                 />
 
-                {values.logo ? (
+                {values.company_logo ? (
                   <MuiImage
                     sx={{ height: "200px", textAlign: "center" }}
-                    src={URL.createObjectURL(values.logo)}
+                    src={URL.createObjectURL(values.company_logo)}
                   />
                 ) : (
                   <CameraOutlined fontSize="large" />
                 )}
               </Box>
-              {!!errors.logo && !!touched.logo && (
-                <FormHelperText error>{errors.logo}</FormHelperText>
+              {!!errors.company_logo && !!touched.company_logo && (
+                <FormHelperText error>{errors.company_logo}</FormHelperText>
               )}
             </Box>
             <FormControl fullWidth margin="dense" color="primary">
-              <InputLabel>Compoany Name</InputLabel>
+              <InputLabel>Company Name</InputLabel>
               <OutlinedInput
-                label="Compoany Name"
+                label="Company Name"
                 type="text"
                 onChange={handleChange}
                 onBlur={handleBlur}
-                error={!!errors.name && !!touched.name}
-                value={values.name}
-                name="name"
+                error={!!errors.company_name && !!touched.company_name}
+                value={values.company_name}
+                name="company_name"
               />
-              {!!errors.name && !!touched.name && (
-                <FormHelperText error>{errors.name}</FormHelperText>
+              {!!errors.company_name && !!touched.company_name && (
+                <FormHelperText error>{errors.company_name}</FormHelperText>
               )}
             </FormControl>
             <FormControl fullWidth margin="dense" color="primary">
@@ -157,12 +204,12 @@ const CompanyForm = ({ type }) => {
                 type="email"
                 onChange={handleChange}
                 onBlur={handleBlur}
-                error={!!errors.email && !!touched.email}
-                value={values.email}
-                name="email"
+                error={!!errors.company_email && !!touched.company_email}
+                value={values.company_email}
+                name="company_email"
               />
-              {!!errors.email && !!touched.email && (
-                <FormHelperText error>{errors.email}</FormHelperText>
+              {!!errors.company_email && !!touched.company_email && (
+                <FormHelperText error>{errors.company_email}</FormHelperText>
               )}
             </FormControl>
             <FormControl fullWidth margin="dense" color="primary">
@@ -172,82 +219,129 @@ const CompanyForm = ({ type }) => {
                 type="text"
                 onChange={handleChange}
                 onBlur={handleBlur}
-                error={!!errors.website && !!touched.website}
-                value={values.website}
-                name="website"
+                error={!!errors.company_website && !!touched.company_website}
+                value={values.company_website}
+                name="company_website"
               />
-              {!!errors.website && !!touched.website && (
-                <FormHelperText error>{errors.website}</FormHelperText>
+              {!!errors.company_website && !!touched.company_website && (
+                <FormHelperText error>{errors.company_website}</FormHelperText>
               )}
             </FormControl>
-            <FormControl fullWidth margin="dense" color="primary">
-              <InputLabel>Governorate</InputLabel>
-              <OutlinedInput
-                label="Governorate"
-                type="text"
+            <FormControl
+              fullWidth
+              margin="dense"
+              color="primary"
+              error={!!errors.company_location && !!touched.company_location}
+            >
+              <InputLabel>Location</InputLabel>
+              <Select
+                label="Location"
+                name="company_location"
+                value={values.company_location}
                 onChange={handleChange}
                 onBlur={handleBlur}
-                error={!!errors.governorate && !!touched.governorate}
-                value={values.governorate}
-                name="governorate"
-              />
-              {!!errors.governorate && !!touched.governorate && (
-                <FormHelperText error>{errors.governorate}</FormHelperText>
+              >
+                {locations.map((location) => (
+                  <MenuItem key={location} value={location}>
+                    {location}
+                  </MenuItem>
+                ))}
+              </Select>
+              {!!errors.company_location && !!touched.company_location && (
+                <FormHelperText>{errors.company_location}</FormHelperText>
               )}
             </FormControl>
-
             <FormControl fullWidth margin="dense" color="primary">
               <InputLabel>Company Size</InputLabel>
               <OutlinedInput
-                label="Compoany Size"
+                label="company Size"
                 type="text"
                 onChange={handleChange}
                 onBlur={handleBlur}
-                error={!!errors.size && !!touched.size}
-                value={values.size}
-                name="size"
+                error={!!errors.company_size && !!touched.company_size}
+                value={values.company_size}
+                name="company_size"
               />
-              {!!errors.size && !!touched.size && (
-                <FormHelperText error>{errors.size}</FormHelperText>
+              {!!errors.company_size && !!touched.company_size && (
+                <FormHelperText error>{errors.company_size}</FormHelperText>
+              )}
+            </FormControl>
+            <FormControl
+              fullWidth
+              margin="dense"
+              color="primary"
+              error={!!errors.company_industry && !!touched.company_industry}
+            >
+              <InputLabel>Industry</InputLabel>
+              <Select
+                label="Industry"
+                name="company_industry"
+                value={values.company_industry}
+                onChange={handleChange}
+                onBlur={handleBlur}
+              >
+                {industries.map((industry) => (
+                  <MenuItem key={industry} value={industry}>
+                    {industry}
+                  </MenuItem>
+                ))}
+              </Select>
+              {!!errors.company_industry && !!touched.company_industry && (
+                <FormHelperText>{errors.company_industry}</FormHelperText>
               )}
             </FormControl>
             <FormControl fullWidth margin="dense" color="primary">
-              <InputLabel>Service</InputLabel>
+              <InputLabel>Founding Year</InputLabel>
               <OutlinedInput
-                label="Service"
+                label="Founding Year"
                 type="text"
                 onChange={handleChange}
                 onBlur={handleBlur}
-                error={!!errors.service && !!touched.service}
-                value={values.service}
-                name="service"
+                error={!!errors.founding_year && !!touched.founding_year}
+                value={values.founding_year}
+                name="founding_year"
               />
-              {!!errors.service && !!touched.service && (
-                <FormHelperText error>{errors.service}</FormHelperText>
+              {!!errors.founding_year && !!touched.founding_year && (
+                <FormHelperText error>{errors.founding_year}</FormHelperText>
               )}
             </FormControl>
             <FormControl fullWidth margin="dense" color="primary">
-              {/* <InputLabel>Description</InputLabel> */}
-              <TextField
-                label="Description"
-                type="text"
-                onChange={handleChange}
-                onBlur={handleBlur}
-                multiline
-                rows={6}
-                error={!!errors.description && !!touched.description}
-                value={values.description}
-                name="description"
+              <Autocomplete
+                multiple
+                options={[]}
+                freeSolo
+                value={values.social_media_links}
+                onChange={(event, newValue) => {
+                  setFieldValue("social_media_links", newValue);
+                }}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    variant="outlined"
+                    label="Social Media Links"
+                    placeholder="Add social media links"
+                    error={
+                      !!errors.social_media_links &&
+                      !!touched.social_media_links
+                    }
+                  />
+                )}
               />
-              {!!errors.description && !!touched.description && (
-                <FormHelperText error>{errors.description}</FormHelperText>
+              {!!errors.social_media_links && !!touched.social_media_links && (
+                <FormHelperText error>
+                  {errors.social_media_links}
+                </FormHelperText>
               )}
             </FormControl>
+            {!!error && <Box sx={{ color: "red", mt: 2 }}>{error}</Box>}
             <LoadingButton
+              type="submit"
               fullWidth
               variant="contained"
-              startIcon={<SaveOutlined />}
-              type="submit"
+              sx={{ mt: 3, mb: 2 }}
+              loadingPosition="start"
+              loading={company.isPending}
+              startIcon={<DownloadOutlined fontSize="medium" />}
             >
               {" "}
               Finish
@@ -261,31 +355,39 @@ const CompanyForm = ({ type }) => {
 
 const FreelancerForm = ({ type }) => {
   const navigate = useNavigate();
-  const freelancerHandeler = (values) => {
-    console.log({ ...values, type });
-    navigate("/home");
+  const freelancer = useFreelancer();
+  const [error, setError] = useState("");
+
+  const freelancerHandeler = async (values) => {
+    try {
+      await freelancer.mutateAsync(values);
+      navigate("/home");
+    } catch (err) {
+      setError("An error occurred, please try again.");
+    }
   };
+
   return (
     <Box>
       <Formik
         onSubmit={freelancerHandeler}
         initialValues={{
           name: "",
-          image: "",
+          profile_photo: "",
           gender: "male",
-          phone: "",
+          phone_number: "",
           location: "",
           bio: "",
-          skills: [],
+          languages: "",
         }}
         validationSchema={yup.object({
           name: yup.string().required("name is required"),
           gender: yup.string().required("gender is required"),
           location: yup.string().required("location is required"),
-          phone: yup.string().required("phone is required"),
+          phone_number: yup.string().required("phone_number is required"),
           bio: yup.string().required("bio is required"),
-          skills: yup.mixed().required("skills is required"),
-          image: yup.mixed().required("image is required"),
+          languages: yup.string().required("languages is required"),
+          profile_photo: yup.mixed().required("image is required"),
         })}
       >
         {({
@@ -315,25 +417,25 @@ const FreelancerForm = ({ type }) => {
               >
                 <VisuallyHiddenInput
                   type="file"
-                  name="image"
+                  name="profile_photo"
                   onBlur={handleBlur}
                   accept="image/jpg,image/png,image/jpeg"
                   onChange={(e) => {
-                    setFieldValue("image", e.target.files[0]);
+                    setFieldValue("profile_photo", e.target.files[0]);
                   }}
                 />
 
-                {values.image ? (
+                {values.profile_photo ? (
                   <MuiImage
                     sx={{ height: "200px", textAlign: "center" }}
-                    src={URL.createObjectURL(values.image)}
+                    src={URL.createObjectURL(values.profile_photo)}
                   />
                 ) : (
                   <CameraOutlined fontSize="large" />
                 )}
               </Box>
-              {!!errors.image && !!touched.image && (
-                <FormHelperText error>{errors.image}</FormHelperText>
+              {!!errors.profile_photo && !!touched.profile_photo && (
+                <FormHelperText error>{errors.profile_photo}</FormHelperText>
               )}
             </Box>
             <FormControl fullWidth margin="dense" color="primary">
@@ -365,8 +467,8 @@ const FreelancerForm = ({ type }) => {
                 <MenuItem value="male">Male</MenuItem>
                 <MenuItem value="female">Female</MenuItem>
               </Select>
-              {!!errors.email && !!touched.email && (
-                <FormHelperText error>{errors.email}</FormHelperText>
+              {!!errors.gender && !!touched.gender && (
+                <FormHelperText error>{errors.gender}</FormHelperText>
               )}
             </FormControl>
             <FormControl fullWidth margin="dense" color="primary">
@@ -376,50 +478,53 @@ const FreelancerForm = ({ type }) => {
                 type="text"
                 onChange={handleChange}
                 onBlur={handleBlur}
-                error={!!errors.phone && !!touched.phone}
-                value={values.phone}
-                name="phone"
+                error={!!errors.phone_number && !!touched.phone_number}
+                value={values.phone_number}
+                name="phone_number"
               />
-              {!!errors.phone && !!touched.phone && (
-                <FormHelperText error>{errors.phone}</FormHelperText>
+              {!!errors.phone_number && !!touched.phone_number && (
+                <FormHelperText error>{errors.phone_number}</FormHelperText>
+              )}
+            </FormControl>
+            <FormControl
+              fullWidth
+              margin="dense"
+              color="primary"
+              error={!!errors.location && !!touched.location}
+            >
+              <InputLabel>Location</InputLabel>
+              <Select
+                label="Location"
+                name="location"
+                value={values.location}
+                onChange={handleChange}
+                onBlur={handleBlur}
+              >
+                {locations.map((location) => (
+                  <MenuItem key={location} value={location}>
+                    {location}
+                  </MenuItem>
+                ))}
+              </Select>
+              {!!errors.location && !!touched.location && (
+                <FormHelperText>{errors.company_location}</FormHelperText>
               )}
             </FormControl>
             <FormControl fullWidth margin="dense" color="primary">
-              <InputLabel>Location</InputLabel>
+              <InputLabel>languages</InputLabel>
               <OutlinedInput
-                label="Location"
+                label="languages"
                 type="text"
                 onChange={handleChange}
                 onBlur={handleBlur}
-                error={!!errors.location && !!touched.location}
-                value={values.location}
-                name="location"
+                error={!!errors.languages && !!touched.languages}
+                value={values.languages}
+                name="languages"
               />
-              {!!errors.location && !!touched.location && (
-                <FormHelperText error>{errors.location}</FormHelperText>
+              {!!errors.languages && !!touched.languages && (
+                <FormHelperText error>{errors.languages}</FormHelperText>
               )}
             </FormControl>
-            {/* <FormControl> */}
-            <Autocomplete
-              multiple
-              options={skills}
-              getOptionLabel={(option) => option.title}
-              value={values.skills}
-              fullWidth
-              disableCloseOnSelect
-              onChange={(e, v) => {
-                setFieldValue("skills", v);
-              }}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  variant="outlined"
-                  margin="dense"
-                  label="Skills"
-                  placeholder="Html"
-                />
-              )}
-            />
             {/* </FormControl> */}
             <FormControl fullWidth margin="dense" color="primary">
               <TextField
@@ -436,11 +541,15 @@ const FreelancerForm = ({ type }) => {
                 <FormHelperText error>{errors.bio}</FormHelperText>
               )}
             </FormControl>
+            {!!error && <Box sx={{ color: "red", mt: 2 }}>{error}</Box>}
             <LoadingButton
+              type="submit"
               fullWidth
               variant="contained"
-              startIcon={<SaveOutlined />}
-              type="submit"
+              sx={{ mt: 3, mb: 2 }}
+              loadingPosition="start"
+              loading={freelancer.isPending}
+              startIcon={<DownloadOutlined fontSize="medium" />}
             >
               {" "}
               Finish

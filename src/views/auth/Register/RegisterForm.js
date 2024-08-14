@@ -4,6 +4,8 @@ import {
   Avatar,
   Box,
   FormControl,
+  MenuItem,
+  Select,
   FormHelperText,
   InputLabel,
   OutlinedInput,
@@ -13,12 +15,15 @@ import { Formik } from "formik";
 import React from "react";
 import { useNavigate } from "react-router";
 import * as yup from "yup";
+import useRegister from "../../../apis/useRegister";
 
 const RegisterForm = () => {
-    const navigate = useNavigate()
+  const navigate = useNavigate();
+  const register = useRegister()
   const registerSubmit = (values) => {
     console.log(values);
-    navigate('/login')
+    register.mutate(values)
+    // navigate("/login");
   };
   return (
     <Box
@@ -45,7 +50,8 @@ const RegisterForm = () => {
             last_name: "",
             email: "",
             password: "",
-            confirm_password: "",
+            password_confirmation: "",
+            role: "COMPANY",
           }}
           onSubmit={registerSubmit}
           validationSchema={yup.object({
@@ -57,11 +63,12 @@ const RegisterForm = () => {
               .min(7)
               .max(26)
               .required("password is required"),
-            confirm_password: yup
+              password_confirmation: yup
               .string()
               .min(7)
               .max(26)
               .required("confirm password is required"),
+            role: yup.string().required("role is required"),
           })}
         >
           {({
@@ -141,15 +148,34 @@ const RegisterForm = () => {
                   onChange={handleChange}
                   onBlur={handleBlur}
                   error={
-                    !!errors.confirm_password && !!touched.confirm_password
+                    !!errors.password_confirmation && !!touched.password_confirmation
                   }
-                  value={values.confirm_password}
-                  name="confirm_password"
+                  value={values.password_confirmation}
+                  name="password_confirmation"
                 />
-                {!!errors.confirm_password && !!touched.confirm_password && (
+                {!!errors.password_confirmation && !!touched.password_confirmation && (
                   <FormHelperText error>
-                    {errors.confirm_password}
+                    {errors.password_confirmation}
                   </FormHelperText>
+                )}
+              </FormControl>
+
+              <FormControl fullWidth margin="dense" color="primary">
+                <InputLabel>Role</InputLabel>
+                <Select
+                  label="Role"
+                  fullWidth
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  error={!!errors.role && !!touched.role}
+                  value={values.role}
+                  name="role"
+                >
+                  <MenuItem value="COMPANY">COMPANY</MenuItem>
+                  <MenuItem value="FREELANCING_OWNER">FREELANCING_OWNER</MenuItem>
+                </Select>
+                {!!errors.email && !!touched.email && (
+                  <FormHelperText error>{errors.email}</FormHelperText>
                 )}
               </FormControl>
 
@@ -159,8 +185,8 @@ const RegisterForm = () => {
                 variant="contained"
                 sx={{ mt: 3, mb: 2 }}
                 loadingPosition="start"
-                // loading
-                disabled={values.password !== values.confirm_password}
+                loading={register.isPending}
+                disabled={values.password !== values.password_confirmation}
               >
                 Sign Up
               </LoadingButton>

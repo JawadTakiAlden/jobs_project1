@@ -8,7 +8,7 @@ export const authRoutes = {
   element: <MinimalLayout />,
   children: [
     {
-      path: "register",
+      path: "",
       element: <Register />,
     },
     {

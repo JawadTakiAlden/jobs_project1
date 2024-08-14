@@ -11,12 +11,15 @@ import { Formik } from "formik";
 import React from "react";
 import { useNavigate } from "react-router";
 import * as yup from "yup";
+import useLogin from "../../../apis/useLogin";
 
 const LoginForm = () => {
   const navigate = useNavigate();
+  const login = useLogin()
   const registerSubmit = (values) => {
     console.log(values);
-    navigate("/fillInformation");
+    login.mutate(values)
+    // navigate("/fillInformation");
   };
   return (
     <Box>
@@ -81,7 +84,7 @@ const LoginForm = () => {
               sx={{ mt: 3, mb: 2 }}
               loadingPosition="start"
               startIcon={<LoginOutlined />}
-              // loading
+              loading={login.isPending}
             >
               Login
             </LoadingButton>
