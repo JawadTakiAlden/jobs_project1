@@ -1,17 +1,19 @@
 import { Box, Divider, Link as MuiLink, Typography } from "@mui/material";
 import React from "react";
 import { Link } from "react-router-dom";
-
-const jobPositions = [
-  {
-    id: 1,
-    jobTitle: "React Front-end Developer",
-    jobDescription:
-      "We are looking for a creative React front-end developer to join our great team. You will be responsible for building and maintaining web applications.",
-  }
-];
+import useGetPostsFreelancing from "../../apis/useGetPostsFreelancings";
 
 const JobApplicationsPage = () => {
+  const { data, isLoading, error } = useGetPostsFreelancing();
+
+  if (isLoading) {
+    return <Typography>Loading...</Typography>;
+  }
+
+  if (error) {
+    return <Typography>Error loading data</Typography>;
+  }
+
   return (
     <Box
       sx={{
@@ -19,11 +21,11 @@ const JobApplicationsPage = () => {
         columnGap: "20px",
         rowGap: "30px",
         flexWrap: "wrap",
-        alignItems : 'stretch'
+        alignItems: "stretch",
       }}
     >
-      {jobPositions.map((job) => {
-        return (
+      {data?.data?.length > 0 ? (
+        data.data.map((job) => (
           <Box
             sx={{
               width: {
@@ -35,30 +37,32 @@ const JobApplicationsPage = () => {
               boxShadow: "0px 0px 18px -5px rgba(0,0,0,0.2)",
               p: 2,
               borderRadius: "8px",
-              pb : 4,
-              position :'relative'
+              pb: 4,
+              position: "relative",
             }}
             key={job.id}
           >
-            <Typography variant="body1">{job.jobTitle}</Typography>
-            <Divider />
-            <Typography variant="caption" sx={{ color: "grey.600" }}>
-              {job.jobDescription}
-            </Typography>
+            <Typography variant="body1">{job.general_job_title}</Typography>
+            <Divider sx={{ my: 1 }} />
             <MuiLink
               component={Link}
-              to={`/jobApplications/${job.id}/applicationsSent`}
+              to={`/jobApplicationfreelancing/${job.id}/applicationsSentFree`}
               variant="caption"
               sx={{
                 display: "block",
-                textDecoration : 'none',
+                textDecoration: "none",
+                position: "absolute",
+                bottom: 16,
+                right: 16,
               }}
             >
               See Applications For This Position ...
             </MuiLink>
           </Box>
-        );
-      })}
+        ))
+      ) : (
+        <Typography>No job applications available</Typography>
+      )}
     </Box>
   );
 };

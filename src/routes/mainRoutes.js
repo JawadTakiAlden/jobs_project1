@@ -89,7 +89,7 @@ export const mainRoutes = {
           path: ":id",
           children: [
             {
-              path: "applicationsSent",
+              path: "applicationsSentFree",
               element: <JobApplicationSentFree />,
             },
           ],
