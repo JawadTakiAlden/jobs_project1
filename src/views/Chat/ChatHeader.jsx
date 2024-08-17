@@ -10,6 +10,14 @@ import { SET_SELECTED_CONVERSATION } from '../../store/slices/chatSlice';
 const ChatHeader = () => {
     const { selctedConversation } = useSelector((state) => state.chat);
     const dispatch = useDispatch();
+    // console.log('-------------------------');
+    // console.log(selctedConversation);
+
+
+
+    
+
+
     return (
       <Box
         sx={{

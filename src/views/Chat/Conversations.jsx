@@ -3,10 +3,13 @@ import { alpha, Box, Divider, FormControl, InputLabel, OutlinedInput } from '@mu
 import React from 'react'
 import ConversationCard from './ConversationCard';
 import ConversationHeader from './ConversationHeader';
+import { useState , useEffect } from 'react';
+ import {fetchChats} from '../../apis/chatService'
+const Conversations = ({conversations }) => {
+  // console.log(conversations);
 
-
-const Conversations = ({ conversations }) => {
     return (
+
       <Box
         sx={{
           width: {xs : "100%" , sm : "320px"},

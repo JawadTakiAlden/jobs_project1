@@ -1,17 +1,23 @@
-"use client"
-import { alpha, Box, Typography } from '@mui/material';
-import React, { useEffect, useRef } from 'react'
+import React, { useRef, useEffect, useState } from 'react';
+import { Box, Typography } from '@mui/material';
 import { useSelector } from 'react-redux';
-
+// import useMessages from '../../apis/useGetMessage';
+import { alpha } from '@mui/material/styles';
 
 const ChatBody = () => {
     const { selctedConversation , selectedConversationID } = useSelector((state) => state.chat);
     const containerMessages = useRef();
+
     useEffect(() => {
         if (containerMessages.current) {
           containerMessages.current.scrollTop = containerMessages.current.scrollHeight;
         }
       }, [selectedConversationID]);
+     console.log(selctedConversation);
+
+
+      // console.log(selctedConversation);
+
     return (
       <Box
         sx={{
@@ -28,14 +34,14 @@ const ChatBody = () => {
         ref={containerMessages}
       >
         {selctedConversation?.messages.map((msg) => (
-          <Box
+<Box
             key={msg.id}
             sx={{
-              backgroundColor: msg.sender === 1 ? "primary.main" : "",
+              backgroundColor: msg.user.id === selctedConversation.participants[0].id ? "primary.main" : "",
               p: 1,
               mb: 2,
               maxWidth: "60%",
-              alignSelf: msg.sender === 1 ? "flex-end" : "flex-start",
+              alignSelf: msg.user.id !== selctedConversation.participants[0].id ? "flex-end" : "flex-start",
               borderRadius: "4px",
               pb: "20px",
               position: "relative",
@@ -54,7 +60,7 @@ const ChatBody = () => {
                   msg.sender === 1 ? theme.palette.primary.contrastText : "",
               }}
             >
-              {msg.text}
+              {msg.message}
             </Typography>
             <Box
               sx={{

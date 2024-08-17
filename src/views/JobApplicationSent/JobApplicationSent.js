@@ -50,7 +50,7 @@ const handleReject = async (applicationId) => {
 const handleDownload = async (applicationId) => {
   try {
     const response = await request({
-      url: `/cv/download?key=${applicationId}`,
+      url: `/cv/download?key=4e120baf-362c-4f1a-8ea9-605f84ad2774.pdf`,
       method: 'get',
       headers: {
         "Content-Type": "application/json"
@@ -157,7 +157,7 @@ if(applicatins.isLoading){
                 variant="outlined"
                 color="secondary"
                 component={"a"}
-                onClick={() =>handleDownload(application.id)}
+                onClick={() =>handleDownload(application.cv)}
               >
                 Download CV
               </Button>
